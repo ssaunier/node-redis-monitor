@@ -1,0 +1,106 @@
+<html>
+<head>
+<script src="/socket.io/socket.io.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"
+        type="text/javascript"></script>
+<script src="/js/highcharts.js"
+        type="text/javascript"></script>
+<script type="text/javascript" src="/js/themes/gray.js"></script>
+
+<script>
+  Highcharts.setOptions({
+    global: {
+      useUTC: false
+    }
+  });
+
+var chart;
+$(document).ready(function() {
+  chart = new Highcharts.Chart({
+    chart: {
+      renderTo: 'container',
+      defaultSeriesType: 'line',
+
+      marginRight: 10,
+    },
+    title: {
+      text: 'Live random data'
+    },
+    xAxis: {
+      type: 'datetime',
+      tickPixelInterval: 150
+    },
+    yAxis: {
+      title: {
+        text: 'Value'
+      },
+      plotLines: [{
+        value: 0,
+        width: 1,
+        color: '#808080'
+      }]
+    },
+    tooltip: {
+      formatter: function() {
+        return '<b>'+ this.series.name +'</b><br/>'+
+          Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x)
+          +'<br/>'+ 
+          Highcharts.numberFormat(this.y, 2);
+      }
+    },
+    legend: {
+      enabled: true
+    },
+    exporting: {
+      enabled: false
+    },
+    series: [{
+      name: 'Random data'
+    }],
+    plotOptions: {
+      series: {
+        marker: {
+          enabled: false,
+          states: {
+            hover: {
+              enabled: true,
+              radius: 5}}
+          
+        },
+        lineWidth: 1
+      }
+    }
+  });
+  
+  var series = chart.series[0];
+  var socket = io.connect();
+  var last_server_time = 0, last_commands_processed = 0;
+  socket.on('update', function (data) {
+    var server_time = parseInt(data["server_time"]);
+    var commands_processed = parseInt(data["total_commands_processed"]);
+    var delta_secs = (server_time - last_server_time)/1000000;
+    var delta_commands = commands_processed - last_commands_processed;
+    var throughput = delta_commands / delta_secs;
+    last_server_time = server_time;
+    last_commands_processed = commands_processed;
+
+    var now = (new Date()).getTime();
+    if (series.data.length < 300){
+      series.addPoint([now, throughput], true, false);
+    } else {
+      series.addPoint([now, throughput], true, true);
+    }
+
+  });
+  
+});
+   
+</script>
+<script>
+</script>
+
+</head>
+<body>
+<div id="container" style="width: 100%; height: 400px"></div>
+</body>
+</html>
