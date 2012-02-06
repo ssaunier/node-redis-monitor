@@ -10,7 +10,7 @@ $(document).ready(function() {
     chart: {
       renderTo: 'container',
       defaultSeriesType: 'line',
-      marginRight: 10,
+      marginRight: 80,
     },
     title: {
       text: 'Redis Server State'
@@ -29,7 +29,8 @@ $(document).ready(function() {
       },
       title: {
         text: 'Commands Processed Per Second'
-      }
+      },
+
 
     }, {
       gridLineWidth: 0,
@@ -44,7 +45,8 @@ $(document).ready(function() {
         text: "Memory Used",
         style: {
           color: '#AA4643'}
-      }
+      },
+      opposite: true
     }
            ],
     tooltip: {
