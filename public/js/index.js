@@ -1,8 +1,8 @@
-  Highcharts.setOptions({
-    global: {
-      useUTC: false
+Highcharts.setOptions({
+  global: {
+    useUTC: false
     }
-  });
+});
 
 var chart;
 $(document).ready(function() {
@@ -35,7 +35,7 @@ $(document).ready(function() {
       gridLineWidth: 0,
       labels: {
         formatter: function() {
-              return this.value +'MB';
+              return bytesToHuman(this.value);
         },
         style: {
               color: '#AA4643'}
@@ -103,8 +103,8 @@ $(document).ready(function() {
     last_server_time = server_time;
     last_commands_processed = commands_processed;
 
-    var mem_used = parseInt(data["used_memory_human"]);
-    var mem_peak = parseInt(data["used_memory_peak_human"]);
+    var mem_used = parseInt(data["used_memory"]);
+    var mem_peak = parseInt(data["used_memory_peak"]);
     var now = (new Date()).getTime();
     if (cps_series.data.length < 300){
       cps_series.addPoint([now, throughput], true, false);
@@ -120,3 +120,17 @@ $(document).ready(function() {
   
 });
    
+function bytesToHuman(bytes){
+  if (bytes < 1024){
+    return bytes + "B";
+  } else if (bytes < (1024*1024)){
+    bytes = (bytes/1024).toFixed(2);
+    return bytes + "K";
+  } else if (bytes < (1024*1024*1024)) {
+    bytes = (bytes/(1024*1024)).toFixed(2);
+    return bytes + "M";
+  } else {
+    bytes = (bytes/(1024*1024*1024)).toFixed(2);
+    return bytes + "G";
+  }
+}
