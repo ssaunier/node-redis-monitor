@@ -19,6 +19,21 @@ var express = require("express");
 var app = express.createServer();
 var io = require("socket.io").listen(app);
 
+io.configure('production', function(){
+  io.enable('browser client etag');
+  io.set('log level', 1);
+  
+  io.set('transports', [
+    'websocket'
+    , 'flashsocket'
+    , 'htmlfile'
+    , 'xhr-polling'
+    , 'jsonp-polling']);});
+
+io.configure('development', function(){
+  io.set('transports', ['websocket']);
+});
+
 app.listen(8000);
 
 app.configure(function(){
