@@ -5,6 +5,7 @@ Highcharts.setOptions({
 });
 
 var chart;
+var num_of_points = 300;
 $(document).ready(function() {
   chart = new Highcharts.Chart({
     chart: {
@@ -65,15 +66,18 @@ $(document).ready(function() {
     },
     series: [{
       name: 'Commands Processed Per Second',
-      id: "cps"
+      id: "cps",
+      data: initPoints(num_of_points)
     }, {
       name: "Memory used",
       id: "mem",
-      yAxis: 1
+      yAxis: 1,
+      data: initPoints(num_of_points)
     }, {
       name: "Memory used peak",
       id: "mem_peak",
-      yAxis: 1
+      yAxis: 1,
+      data: initPoints(num_of_points)
     }],
     plotOptions: {
       series: {
@@ -108,7 +112,7 @@ $(document).ready(function() {
     var mem_used = parseInt(data["used_memory"]);
     var mem_peak = parseInt(data["used_memory_peak"]);
     var now = (new Date()).getTime();
-    if (cps_series.data.length < 300){
+    if (cps_series.data.length < num_of_points){
       cps_series.addPoint([now, throughput], true, false);
       mem_series.addPoint([now, mem_used], true, false);
       mem_peak_series.addPoint([now, mem_peak], true, false);
@@ -135,4 +139,13 @@ function bytesToHuman(bytes){
     bytes = (bytes/(1024*1024*1024)).toFixed(2);
     return bytes + "G";
   }
+}
+
+function initPoints(num) {
+  var points = [];
+  var now = (new Date()).getTime();
+  for (var i = now-num*1000; i < now; i+=1000) {
+      points.push([i,0]);
+  }
+  return points;
 }
