@@ -1,6 +1,7 @@
 {
-  "name": "redis-monitor",
+  "name": "node-redis-monitor",
   "version": "0.0.1",
+  "contributors": [ "Shaofeng Niu", "Sébastien Saunier" ],
   "dependencies": {
     "redis": ">= 0.7.1",
     "socket.io": ">= 0.8.7",
