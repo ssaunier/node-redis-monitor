@@ -31,12 +31,9 @@ io.configure('production', function(){
   io.enable('browser client etag');
   io.set('log level', 1);
 
-  io.set('transports', [
-      'websocket'
-    , 'flashsocket'
-    , 'htmlfile'
-    , 'xhr-polling'
-    , 'jsonp-polling' ]);
+  // Heroku :(  https://devcenter.heroku.com/articles/using-socket-io-with-node-js-on-heroku
+  io.set("transports", ["xhr-polling"]);
+  io.set("polling duration", 10);
 });
 
 io.configure('development', function(){
