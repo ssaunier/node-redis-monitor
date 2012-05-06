@@ -71,7 +71,7 @@ function start_bcast(client, socket) {
       info.server_timestamp = new Date().getTime() / 1000;
       bcast_update(sockets, info);
     });
-  }, 1000);
+  }, 5000);
 }
 process.on('SIGINT', function () {
   client.quit();
