@@ -1,9 +1,19 @@
-var redis = require("redis");
-var _ = require("underscore");
-_.str = require("underscore.string");
+var redis = require("redis")
+  , url = require("url")
+  , _ = require("underscore")
+  , express = require("express");
+_.str = require("underscore.string")
 
-var client = redis.createClient();
-var server_time = 0, total_commands_processed = 0;
+var client = null;
+if (process.env.REDISTOGO_URL) {
+  // Heroku
+  var rtg = url.parse(process.env.REDISTOGO_URL);
+  client = redis.createClient(rtg.port, rtg.hostname);
+  client.auth(rtg.auth.split(":")[1]);
+} else {
+  // Localhost (development)
+  client = redis.createClient();
+}
 
 function parse_info(str) {
   str = str.split("\r\n").map(function(v, k, l){
@@ -14,27 +24,26 @@ function parse_info(str) {
   return JSON.parse(str);
 }
 
-
-var express = require("express");
 var app = express.createServer();
 var io = require("socket.io").listen(app);
 
 io.configure('production', function(){
   io.enable('browser client etag');
   io.set('log level', 1);
-  
+
   io.set('transports', [
-    'websocket'
+      'websocket'
     , 'flashsocket'
     , 'htmlfile'
     , 'xhr-polling'
-    , 'jsonp-polling']);});
+    , 'jsonp-polling' ]);
+});
 
 io.configure('development', function(){
   io.set('transports', ['websocket']);
 });
 
-app.listen(8000);
+app.listen(process.env.PORT || 8000);
 
 app.configure(function(){
   app.use(app.router);
@@ -72,3 +81,5 @@ process.on('SIGINT', function () {
 });
 
 start_bcast(client, sockets);
+
+console.log("Redis monitor listening on port %d", app.address().port);
