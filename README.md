@@ -25,3 +25,8 @@ Now we can deploy to Heroku
 And see pretty graphs!
 
     heroku open
+
+# License
+
+```node-redis-monitor``` is under MIT License.
+The file ```public/highchart.js``` comes from [HighCharts](http://www.highcharts.com/) v2.2.2.
