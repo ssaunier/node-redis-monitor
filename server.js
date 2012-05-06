@@ -68,6 +68,7 @@ function start_bcast(client, socket) {
   setInterval(function(){
     client.info(function(err, reply) {
       var info = parse_info(reply);
+      info.server_timestamp = new Date().getTime() / 1000;
       bcast_update(sockets, info);
     });
   }, 1000);

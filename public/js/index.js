@@ -88,19 +88,18 @@ $(document).ready(function() {
     plot(data);
     updateTable(data);
   });
-  var last_server_time = (new Date()).getTime(), last_commands_processed = 0;
+  var last_server_timestamp = 0, last_commands_processed = 0;
 var cps_series = chart.get("cps"),
 mem_series = chart.get("mem"),
 mem_peak_series = chart.get("mem_peak");
 
 var firstPoint = true;
 function plot(data){
-  var now = (new Date()).getTime();
   var commands_processed = parseInt(data["total_commands_processed"]);
-  var delta_secs = (now - last_server_time) / 1000;
+  var delta_secs = data.server_timestamp - last_server_timestamp;
   var delta_commands = commands_processed - last_commands_processed;
   var throughput = delta_commands / delta_secs;
-  last_server_time = now;
+  last_server_timestamp = data.server_timestamp;
   last_commands_processed = commands_processed;
   if (firstPoint) {
     firstPoint = false;
@@ -109,11 +108,11 @@ function plot(data){
 
   var mem_used = parseInt(data["used_memory"]);
   if (cps_series.data.length < num_of_points){
-    cps_series.addPoint([now, throughput], true, false);
-    mem_series.addPoint([now, mem_used], true, false);
+    cps_series.addPoint([data.server_timestamp * 1000, throughput], true, false);
+    mem_series.addPoint([data.server_timestamp * 1000, mem_used], true, false);
   } else {
-    cps_series.addPoint([now, throughput], true, true);
-    mem_series.addPoint([now, mem_used], true, true);
+    cps_series.addPoint([data.server_timestamp * 1000, throughput], true, true);
+    mem_series.addPoint([data.server_timestamp * 1000, mem_used], true, true);
   }
 
 }
